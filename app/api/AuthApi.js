@@ -1,11 +1,12 @@
-import { setError, setSession } from '../features/auth/actions';
 import { isUndefinedOrNull } from '../shared/utils';
-import Api, { ApiMethod } from './Api';
+import { setAuthToken } from '../store/authSlice';
 import store from '../store/store';
+import Api, { ApiMethod } from './Api';
+// eslint-disable-next-line import/no-cycle
 
 export default class AuthApi extends Api {
-  constructor() {
-    super('auth');
+  constructor(authState) {
+    super('auth', authState);
   }
 
   async login(username, password) {
@@ -15,8 +16,8 @@ export default class AuthApi extends Api {
     if (this.isApiError(response)) {
       return null;
     }
-    const json = await response.json();
-    return json;
+    // const json = await response.json();
+    return response;
   }
 
   async register(username, email, password) {
@@ -26,32 +27,32 @@ export default class AuthApi extends Api {
     if (this.isApiError(response)) {
       return null;
     }
-    const json = await response.json();
-    return json;
+    // const json = await response.json();
+    return response;
   }
 }
 
-const AuthManager = {
+const AuthManager = (authState) => ({
   async login(usernameOrEmail, password) {
-    const success = await new AuthApi().login(usernameOrEmail, password);
+    const success = await new AuthApi(authState).login(usernameOrEmail, password);
     if (isUndefinedOrNull(success)) {
-      store.dispatch(setError());
-      // store.dispatch(logout());
+      store.dispatch(setAuthToken(null));
       return false;
     }
-    await store.dispatch(setSession(success));
+    store.dispatch(setAuthToken(null));
+    // await store.dispatch(setSession(success));
     return true;
   },
   async register(username, email, password) {
-    const success = await new AuthApi().register(username, email, password);
+    const success = await new AuthApi(authState).register(username, email, password);
     if (isUndefinedOrNull(success)) {
-      store.dispatch(setError);
+      // store.dispatch(setError);
       // store.dispatch(logout);
       return false;
     }
-    store.dispatch(setSession({ isLoggedIn: true }));
+    // store.dispatch(({ isLoggedIn: true }));
     return true;
   },
-};
+});
 
 export { AuthManager };

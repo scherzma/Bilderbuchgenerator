@@ -14,7 +14,7 @@ function Header() {
         <div>
           <button>Log Out</button>
         </div>
-        <Link href="https://github.com/"> Github </Link>
+        <Link href="https://github.com"> Github </Link>
       </div>
     </header>
   );

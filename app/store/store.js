@@ -1,14 +1,12 @@
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import thunk from 'redux-thunk';
-import auth from '../features/auth/reducers';
+import { configureStore } from '@reduxjs/toolkit';
+import { createWrapper } from 'next-redux-wrapper';
+import { authSlice } from './authSlice';
 
-const middleware = [thunk];
-
-const store = configureStore({
-  reducer: combineReducers({
-    auth,
-  }),
-  middleware,
+const makeStore = () => configureStore({
+  reducer: {
+    [authSlice.name]: authSlice.reducer,
+  },
+  devTools: true,
 });
-
-export default store;
+export default makeStore();
+export const wrapper = createWrapper(makeStore);
